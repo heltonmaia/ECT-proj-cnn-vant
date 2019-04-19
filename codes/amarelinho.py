@@ -37,7 +37,6 @@ def mais_prox(obj, lista, alfa=0.998):
 
 #recebe 2 listas de veiculos. uma do frame anterior e outra do frame atual
 #   insere as velocidades por 1 frame pra cada veiculo dao frame2
-# OBS: ATE AGR SO FUNCIONA PRA 2 FRAMES COM O MSM NUMERO DE VEICULOS
 def veloc_pframe(frame1, frame2):
     dists = []
     #lista friends. essa lista tem os veiculos do futuro que deram match com os veiculos do passado
@@ -127,12 +126,6 @@ class Veic():
         return (dx, dy)
 
 
-def Remove(duplicate): 
-    new = []
-    for lin in duplicate: 
-        if lin != '':
-            new.append(lin)
-    return new
 
 
 #recebe um frame.txt do yolo e retorna uma lista de veiculos
