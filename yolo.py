@@ -125,8 +125,8 @@ class Ui_MainWindow(object):
 
         flag = os.system("cd darknet")
         if flag == 512:
-            # mudar uma label na aplicação informando que o diretorio nao foi encontrado
-            print("darknet não está no diretorio atual")
+            # mudar uma label na aplicaÃ§Ã£o informando que o diretorio nao foi encontrado
+            print("darknet nÃ£o estÃ¡ no diretorio atual")
         else:
 
             video_pre = self.video_file_name[0]
@@ -138,8 +138,8 @@ class Ui_MainWindow(object):
                 dot_names = input("darknet/cfg/yolov3.cfg")
                 names = open(dot_names , 'r+')
             except FileNotFoundError:
-                print("arquivo car.data não encontrado")
-                print("arquivo car.names não encontrado")
+                print("arquivo car.data nÃ£o encontrado")
+                print("arquivo car.names nÃ£o encontrado")
 
             arquivo.close()
             '''
