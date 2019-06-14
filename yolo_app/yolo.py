@@ -8,14 +8,19 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QLabel
 import cv2 as cv
 import os
+import sys
 
 class Ui_MainWindow(object):
 
     def __init__(self):
-        self.video_key = True
-        self.video_detected = False
+        self.video_key = True #chave para play pause video
+        self.video_detected = False # chave para video detected ou nÃ£o
+        self.video_flag = False
+        self.cont = 0
+        self.status = "Started"
 
     def setupUi(self, MainWindow):
 
@@ -54,9 +59,13 @@ class Ui_MainWindow(object):
         self.start_video_stream.setObjectName("start_video_stream")
         self.start_video_stream.clicked.connect(self.opcv_tread)
 
-        self.status_label = QtWidgets.QLabel(self.centralwidget)
-        self.status_label.setGeometry(QtCore.QRect(0, 290, 211, 17))
-        self.status_label.setObjectName("status_label")
+        self.exit_video_stream = QtWidgets.QPushButton(self.centralwidget)
+        self.exit_video_stream.setGeometry(QtCore.QRect(30, 170, 141, 31))
+        self.exit_video_stream.setObjectName("exit_video_stream")
+        self.exit_video_stream.clicked.connect(self.exit_video)
+
+        self.statuslabel = QLabel(self.centralwidget)
+        self.statuslabel.setGeometry(QtCore.QRect(10, 295, 211, 17))
 
         MainWindow.setCentralWidget(self.centralwidget)
 
@@ -82,8 +91,18 @@ class Ui_MainWindow(object):
         self.actionWeight.setObjectName("actionWeight")
         self.actionWeight.triggered.connect(self.pick_weight)
 
+        self.actionData = QtWidgets.QAction(MainWindow)
+        self.actionData.setObjectName("actionData")
+        self.actionData.triggered.connect(self.pick_data)
+
+        self.actionCfg = QtWidgets.QAction(MainWindow)
+        self.actionCfg.setObjectName("actionCfg")
+        self.actionCfg.triggered.connect(self.pick_cfg)
+
         self.menuFile.addAction(self.actionVideo)
         self.menuFile.addAction(self.actionWeight)
+        self.menuFile.addAction(self.actionData)
+        self.menuFile.addAction(self.actionCfg)
 
         self.menubar.addAction(self.menuFile.menuAction())
 
@@ -94,14 +113,16 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Car Detection"))
         self.play_button.setText(_translate("MainWindow", "Play"))
+        self.exit_video_stream.setText(_translate("MainWindow", "exit_video"))
         self.stop_button.setText(_translate("MainWindow", "Stop"))
         self.start_detection.setText(_translate("MainWindow", "Start Detection"))
         self.start_video_stream.setText(_translate("MainWindow", "Start video stream"))
-        self.status_label.setText(_translate("MainWindow", ""))
+        self.statuslabel.setText(_translate("MainWindow",self.status))
         self.menuFile.setTitle(_translate("MainWindow", "File"))
         self.actionVideo.setText(_translate("MainWindow", "Video"))
         self.actionWeight.setText(_translate("MainWindow", "Weight"))
-
+        self.actionData.setText(_translate("MainWindow", ".data"))
+        self.actionCfg.setText(_translate("MainWindow", ".cfg"))
 
     def pick_video(self):
         options = QFileDialog.Options()
@@ -114,51 +135,59 @@ class Ui_MainWindow(object):
         options |= QFileDialog.DontUseNativeDialog
         self.weight_file_name = QFileDialog.getOpenFileName(None, 'Open file', './')#setar filtros
 
+    def pick_data(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        self.data_file_name = QFileDialog.getOpenFileName(None, 'Open file', './')
+
+    def pick_cfg(self):
+        options = QFileDialog.Options()
+        options |= QFileDialog.DontUseNativeDialog
+        self.cfg_file_name = QFileDialog.getOpenFileName(None, 'Open file', './')
+
     def play(self):
         self.video_key = True
 
     def stop(self):
         self.video_key = False
 
+    def exit_video(self):
+        self.video_flag = True #flag para parar o video
+
     def detect(self):
 
-
-        flag = os.system("cd darknet")
-        if flag == 512:
-            # mudar uma label na aplicaÃ§Ã£o informando que o diretorio nao foi encontrado
-            print("darknet nÃ£o estÃ¡ no diretorio atual")
-        else:
-
-            video_pre = self.video_file_name[0]
+        video_pre = self.video_file_name[0]
+        # concertar tratamento de erros
+        '''try:
             weight = self.weight_file_name[0]
-            '''
-            try:
-                dot_data = input("darknet/cfg/coco.data")
-                data = open(dot_data, 'r+')
-                dot_names = input("darknet/cfg/yolov3.cfg")
-                names = open(dot_names , 'r+')
-            except FileNotFoundError:
-                print("arquivo car.data nÃ£o encontrado")
-                print("arquivo car.names nÃ£o encontrado")
+        except WEIGHT_PRE_ERROR:
+            self.status = "Erro no arquivo de peso selecionado"
+            self.statuslabel.setText(self.status)'''
+        weight = self.weight_file_name[0]
+        _data = self.data_file_name[0]
+        _cfg = self.data_file_name[0]
+        cont = self.cont
 
-            arquivo.close()
-            '''
+        try:
+            os.system(f'./darknet/darknet detector demo {_data} {_cfg} {weight} {video_pre} -out_filename video_detected{cont}.avi -dont_show -ext_output > video_detected{cont}.txt &')
+        except PATH_ERROR:
+            self.status = "Erro no path do diretorio darknet"
+            self.statuslabel.setText(self.status)
+        else:
+            self.status = "detecting"
+            self.statuslabel.setText(self.status)
 
-            os.system( "./darknet detector demo darknet/data/car.data darknet/cfg/yolov3.cfg "+ str(weight)+" "+ str(video_pre)+" -out_filename detect.avi -dont_show")#teste / funciona assim
+        self.cont +=1
 
-            self.video_detected = "darknet/detect.avi"
-
-            self.video_detected_flag()
-
-    def video_detected_flag(self):
-        video_detected = True
+        os.system('clear')
+        #self.status = "detected"
+        #self.statuslabel.setText(self.status)
 
     def opcv_tread(self):
 
-        if (not video_detected):
-            cap = cv.VideoCapture(self.video_file_name[0])
-        else:
-            cap = cv.VideoCapture(self.video_detected)
+        self.video_flag = False
+        cap = cv.VideoCapture(self.video_file_name[0])
+
 
         if cap.isOpened() == False:
             print("Error opening video file, try again")
@@ -173,11 +202,21 @@ class Ui_MainWindow(object):
             if (not ret):
                 break
 
+            self.status = "Playing video"
+            self.statuslabel.setText(self.status)
+
+            if (self.video_flag):
+                self.status = "Started"
+                self.statuslabel.setText(self.status)
+                break
+
             if (not self.video_key):
+
                 while True:
 
                     cv.imshow(win, frame)
                     cv.waitKey(10)
+
                     if (self.video_key):
                         break
 
@@ -190,7 +229,7 @@ class Ui_MainWindow(object):
         cv.destroyAllWindows()
 
 if __name__ == "__main__":
-    import sys
+
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
