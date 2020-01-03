@@ -1,0 +1,11 @@
+# Files too big for git
+*.mp4
+*.MP4
+*.avi
+
+# Log directory
+logs/*
+
+# VSCcode configs
+.vscode/*
+../.vscode/*
