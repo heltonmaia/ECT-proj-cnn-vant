@@ -1,12 +1,14 @@
 from pydarknet import Detector, Image
 from math import sqrt
+
+from veloc import *
 import pandas as pd
 import cv2 as cv
 import argparse
 import time
 import os
 
-os.environ['DARKNET_HOME'] = './darknet/'
+os.environ['DARKNET_HOME'] = '/home/yes0/lu/darknet/'
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -100,8 +102,9 @@ if __name__ == '__main__':
         main_win = 'Safe Distance Tool'
         cv.namedWindow(main_win, cv.WINDOW_KEEPRATIO)
         cv.resizeWindow(main_win, 1685, 988)
-
+    first = True
     while(cap.isOpened()):
+        
         ret, frame = cap.read()
 
         if(not ret):
@@ -129,11 +132,12 @@ if __name__ == '__main__':
 
             if(roiX <= x <= roiX+roiW and roiY <= y <= roiY+roiH):
                 resultsInsideRoi.append(result)
-
+        listFrame = []
         for index, (className, score, bounds) in enumerate(resultsInsideRoi):
             className = str(className.decode("utf-8")) + str(index)
             x, y, w, h = bounds
-           
+            listFrame.append(Veic([className, score, x, y, w, h]))
+            
             # Bounding box
             cv.rectangle(
                 frame,
@@ -179,7 +183,15 @@ if __name__ == '__main__':
                         )
 
                     break
-
+        if (not first):
+            memory.set_frame(listFrame)
+        else:
+            memory = List_Veic(listFrame)
+            first = False
+        for veic in memory.l:
+            cv.putText(frame, str(veic.mean_veloc)[0:4], (veic.x, veic.y), cv.FONT_HERSHEY_COMPLEX, 0.9, (0,255,0))
+        
+        
         if(args.debug):
             cv.imshow(main_win, frame)
         
