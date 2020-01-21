@@ -1,7 +1,8 @@
 from pydarknet import Detector, Image
 from math import sqrt
-
 from veloc import *
+from progress.bar import Bar
+
 import pandas as pd
 import cv2 as cv
 import argparse
@@ -64,6 +65,7 @@ if __name__ == '__main__':
     )
 
     cap = cv.VideoCapture(args.video)
+    bar = Bar('Processing Frames', max=int(cap.get(cv.CAP_PROP_FRAME_COUNT)))
     width  = int(cap.get(3))
     height = int(cap.get(4))
 
@@ -106,7 +108,7 @@ if __name__ == '__main__':
     while(cap.isOpened()):
         
         ret, frame = cap.read()
-
+        bar.next()
         if(not ret):
             break
 
@@ -190,8 +192,7 @@ if __name__ == '__main__':
             first = False
         for veic in memory.l:
             cv.putText(frame, str(veic.mean_veloc)[0:4], (veic.x, veic.y), cv.FONT_HERSHEY_COMPLEX, 0.9, (0,255,0))
-        
-        
+
         if(args.debug):
             cv.imshow(main_win, frame)
         
@@ -224,5 +225,5 @@ if __name__ == '__main__':
                         outWriter.release()
 
                     exit()
-
+    bar.finish()
     print('Done!')
