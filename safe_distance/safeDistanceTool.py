@@ -9,7 +9,7 @@ import argparse
 import time
 import os
 
-os.environ['DARKNET_HOME'] = '/home/yes0/lu/darknet/'
+os.environ['DARKNET_HOME'] = '/darknet/'
 
 def parse_args():
     parser = argparse.ArgumentParser(
