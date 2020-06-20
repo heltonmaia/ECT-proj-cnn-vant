@@ -25,10 +25,10 @@ def FrameCapture(path):
         X_train, X_test = train_test_split(df, test_size=t_size)
         print('tamanho do train: {}'.format(len(X_train)))
         print('tamanho do test: {}'.format(len(X_test)))
-        flag='eu'
+        flag='vitor'
         for i in range(len(X_train)):
-                if flag=='eu':
-                        cv2.imwrite('train/eu/frame{}.jpg'.format(i), X_train[i])
+                if flag=='vitor':
+                        cv2.imwrite('train/vitor/frame{}.jpg'.format(i), X_train[i])
                         flag = 'mateus'
                 else:
                         if flag=='mateus':
@@ -36,7 +36,7 @@ def FrameCapture(path):
                                 flag='lucas'
                         else:
                                 cv2.imwrite('train/lucas/frame{}.jpg'.format(i), X_train[i])
-                                flag='eu'
+                                flag='vitor'
 
 
 
