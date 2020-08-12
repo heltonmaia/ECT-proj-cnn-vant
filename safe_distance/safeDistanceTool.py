@@ -9,6 +9,8 @@ import argparse
 import time
 import os
 
+from object_trackers.centroidTracker import *
+
 os.environ['DARKNET_HOME'] = '/darknet/'
 
 def parse_args():
@@ -89,7 +91,7 @@ if __name__ == '__main__':
     ret, frame = cap.read()
 
     if(not ret):
-        print('Error readning video stream')
+        print('Error reading video stream')
         exit()
 
     roi_win = 'Select ROI for proximity detection'
