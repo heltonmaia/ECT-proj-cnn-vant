@@ -1,19 +1,19 @@
+#include "darknet.h"
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
+#if defined(_MSC_VER) && defined(_DEBUG)
+#include <crtdbg.h>
+#endif
 
 #include "parser.h"
 #include "utils.h"
-#include "cuda.h"
+#include "dark_cuda.h"
 #include "blas.h"
 #include "connected_layer.h"
 
-#ifdef OPENCV
-#include "opencv2/highgui/highgui_c.h"
-#endif
 
 extern void predict_classifier(char *datacfg, char *cfgfile, char *weightfile, char *filename, int top);
-extern void test_detector(char *datacfg, char *cfgfile, char *weightfile, char *filename, float thresh, int ext_output);
 extern void run_voxel(int argc, char **argv);
 extern void run_yolo(int argc, char **argv);
 extern void run_detector(int argc, char **argv);
@@ -117,6 +117,26 @@ void operations(char *cfgfile)
             ops += 2l * l.n * l.size*l.size*l.c * l.out_h*l.out_w;
         } else if(l.type == CONNECTED){
             ops += 2l * l.inputs * l.outputs;
+		} else if (l.type == RNN){
+            ops += 2l * l.input_layer->inputs * l.input_layer->outputs;
+            ops += 2l * l.self_layer->inputs * l.self_layer->outputs;
+            ops += 2l * l.output_layer->inputs * l.output_layer->outputs;
+        } else if (l.type == GRU){
+            ops += 2l * l.uz->inputs * l.uz->outputs;
+            ops += 2l * l.uh->inputs * l.uh->outputs;
+            ops += 2l * l.ur->inputs * l.ur->outputs;
+            ops += 2l * l.wz->inputs * l.wz->outputs;
+            ops += 2l * l.wh->inputs * l.wh->outputs;
+            ops += 2l * l.wr->inputs * l.wr->outputs;
+        } else if (l.type == LSTM){
+            ops += 2l * l.uf->inputs * l.uf->outputs;
+            ops += 2l * l.ui->inputs * l.ui->outputs;
+            ops += 2l * l.ug->inputs * l.ug->outputs;
+            ops += 2l * l.uo->inputs * l.uo->outputs;
+            ops += 2l * l.wf->inputs * l.wf->outputs;
+            ops += 2l * l.wi->inputs * l.wi->outputs;
+            ops += 2l * l.wg->inputs * l.wg->outputs;
+            ops += 2l * l.wo->inputs * l.wo->outputs;
         }
     }
     printf("Floating Point Operations: %ld\n", ops);
@@ -145,17 +165,19 @@ void oneoff(char *cfgfile, char *weightfile, char *outfile)
     copy_cpu(l.n/3*l.c, l.weights, 1, l.weights +   l.n/3*l.c, 1);
     copy_cpu(l.n/3*l.c, l.weights, 1, l.weights + 2*l.n/3*l.c, 1);
     *net.seen = 0;
+    *net.cur_iteration = 0;
     save_weights(net, outfile);
 }
 
 void partial(char *cfgfile, char *weightfile, char *outfile, int max)
 {
     gpu_index = -1;
-    network net = parse_network_cfg(cfgfile);
+    network net = parse_network_cfg_custom(cfgfile, 1, 1);
     if(weightfile){
         load_weights_upto(&net, weightfile, max);
     }
     *net.seen = 0;
+    *net.cur_iteration = 0;
     save_weights_upto(net, outfile, max);
 }
 
@@ -220,6 +242,16 @@ void reset_normalize_net(char *cfgfile, char *weightfile, char *outfile)
             denormalize_connected_layer(*l.state_r_layer);
             denormalize_connected_layer(*l.state_h_layer);
         }
+        if (l.type == LSTM && l.batch_normalize) {
+            denormalize_connected_layer(*l.wf);
+            denormalize_connected_layer(*l.wi);
+            denormalize_connected_layer(*l.wg);
+            denormalize_connected_layer(*l.wo);
+            denormalize_connected_layer(*l.uf);
+            denormalize_connected_layer(*l.ui);
+            denormalize_connected_layer(*l.ug);
+            denormalize_connected_layer(*l.uo);
+		}
     }
     save_weights(net, outfile);
 }
@@ -228,12 +260,12 @@ layer normalize_layer(layer l, int n)
 {
     int j;
     l.batch_normalize=1;
-    l.scales = calloc(n, sizeof(float));
+    l.scales = (float*)xcalloc(n, sizeof(float));
     for(j = 0; j < n; ++j){
         l.scales[j] = 1;
     }
-    l.rolling_mean = calloc(n, sizeof(float));
-    l.rolling_variance = calloc(n, sizeof(float));
+    l.rolling_mean = (float*)xcalloc(n, sizeof(float));
+    l.rolling_variance = (float*)xcalloc(n, sizeof(float));
     return l;
 }
 
@@ -260,6 +292,17 @@ void normalize_net(char *cfgfile, char *weightfile, char *outfile)
             *l.state_z_layer = normalize_layer(*l.state_z_layer, l.state_z_layer->outputs);
             *l.state_r_layer = normalize_layer(*l.state_r_layer, l.state_r_layer->outputs);
             *l.state_h_layer = normalize_layer(*l.state_h_layer, l.state_h_layer->outputs);
+            net.layers[i].batch_normalize=1;
+        }
+        if (l.type == LSTM && l.batch_normalize) {
+            *l.wf = normalize_layer(*l.wf, l.wf->outputs);
+            *l.wi = normalize_layer(*l.wi, l.wi->outputs);
+            *l.wg = normalize_layer(*l.wg, l.wg->outputs);
+            *l.wo = normalize_layer(*l.wo, l.wo->outputs);
+            *l.uf = normalize_layer(*l.uf, l.uf->outputs);
+            *l.ui = normalize_layer(*l.ui, l.ui->outputs);
+            *l.ug = normalize_layer(*l.ug, l.ug->outputs);
+            *l.uo = normalize_layer(*l.uo, l.uo->outputs);
             net.layers[i].batch_normalize=1;
         }
     }
@@ -294,6 +337,25 @@ void statistics_net(char *cfgfile, char *weightfile)
             statistics_connected_layer(*l.state_r_layer);
             printf("State H\n");
             statistics_connected_layer(*l.state_h_layer);
+        }
+        if (l.type == LSTM && l.batch_normalize) {
+            printf("LSTM Layer %d\n", i);
+            printf("wf\n");
+            statistics_connected_layer(*l.wf);
+            printf("wi\n");
+            statistics_connected_layer(*l.wi);
+            printf("wg\n");
+            statistics_connected_layer(*l.wg);
+            printf("wo\n");
+            statistics_connected_layer(*l.wo);
+            printf("uf\n");
+            statistics_connected_layer(*l.uf);
+            printf("ui\n");
+            statistics_connected_layer(*l.ui);
+            printf("ug\n");
+            statistics_connected_layer(*l.ug);
+            printf("uo\n");
+            statistics_connected_layer(*l.uo);
         }
         printf("\n");
     }
@@ -332,6 +394,25 @@ void denormalize_net(char *cfgfile, char *weightfile, char *outfile)
             l.state_h_layer->batch_normalize = 0;
             net.layers[i].batch_normalize=0;
         }
+        if (l.type == GRU && l.batch_normalize) {
+            denormalize_connected_layer(*l.wf);
+            denormalize_connected_layer(*l.wi);
+            denormalize_connected_layer(*l.wg);
+            denormalize_connected_layer(*l.wo);
+            denormalize_connected_layer(*l.uf);
+            denormalize_connected_layer(*l.ui);
+            denormalize_connected_layer(*l.ug);
+            denormalize_connected_layer(*l.uo);
+            l.wf->batch_normalize = 0;
+            l.wi->batch_normalize = 0;
+            l.wg->batch_normalize = 0;
+            l.wo->batch_normalize = 0;
+            l.uf->batch_normalize = 0;
+            l.ui->batch_normalize = 0;
+            l.ug->batch_normalize = 0;
+            l.uo->batch_normalize = 0;
+            net.layers[i].batch_normalize=0;
+		}
     }
     save_weights(net, outfile);
 }
@@ -344,7 +425,7 @@ void visualize(char *cfgfile, char *weightfile)
     }
     visualize_network(net);
 #ifdef OPENCV
-    cvWaitKey(0);
+    wait_until_press_key_cv();
 #endif
 }
 
@@ -352,6 +433,11 @@ int main(int argc, char **argv)
 {
 #ifdef _DEBUG
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+    printf(" _DEBUG is used \n");
+#endif
+
+#ifdef DEBUG
+    printf(" DEBUG=1 \n");
 #endif
 
 	int i;
@@ -370,16 +456,30 @@ int main(int argc, char **argv)
     gpu_index = find_int_arg(argc, argv, "-i", 0);
     if(find_arg(argc, argv, "-nogpu")) {
         gpu_index = -1;
+        printf("\n Currently Darknet doesn't support -nogpu flag. If you want to use CPU - please compile Darknet with GPU=0 in the Makefile, or compile darknet_no_gpu.sln on Windows.\n");
+        exit(-1);
     }
 
 #ifndef GPU
     gpu_index = -1;
-#else
+    printf(" GPU isn't used \n");
+    init_cpu();
+#else   // GPU
     if(gpu_index >= 0){
         cuda_set_device(gpu_index);
-        check_error(cudaSetDeviceFlags(cudaDeviceScheduleBlockingSync));
+        CHECK_CUDA(cudaSetDeviceFlags(cudaDeviceScheduleBlockingSync));
     }
-#endif
+
+    show_cuda_cudnn_info();
+    cuda_debug_sync = find_arg(argc, argv, "-cuda_debug_sync");
+
+#ifdef CUDNN_HALF
+    printf(" CUDNN_HALF=1 \n");
+#endif  // CUDNN_HALF
+
+#endif  // GPU
+
+    show_opencv_info();
 
     if (0 == strcmp(argv[1], "average")){
         average(argc, argv);
@@ -395,7 +495,7 @@ int main(int argc, char **argv)
         float thresh = find_float_arg(argc, argv, "-thresh", .24);
 		int ext_output = find_arg(argc, argv, "-ext_output");
         char *filename = (argc > 4) ? argv[4]: 0;
-        test_detector("cfg/coco.data", argv[2], argv[3], filename, thresh, ext_output);
+        test_detector("cfg/coco.data", argv[2], argv[3], filename, thresh, 0.5, 0, ext_output, 0, NULL, 0, 0);
     } else if (0 == strcmp(argv[1], "cifar")){
         run_cifar(argc, argv);
     } else if (0 == strcmp(argv[1], "go")){
@@ -448,8 +548,6 @@ int main(int argc, char **argv)
         oneoff(argv[2], argv[3], argv[4]);
     } else if (0 == strcmp(argv[1], "partial")){
         partial(argv[2], argv[3], argv[4], atoi(argv[5]));
-    } else if (0 == strcmp(argv[1], "average")){
-        average(argc, argv);
     } else if (0 == strcmp(argv[1], "visualize")){
         visualize(argv[2], (argc > 3) ? argv[3] : 0);
     } else if (0 == strcmp(argv[1], "imtest")){
@@ -459,4 +557,3 @@ int main(int argc, char **argv)
     }
     return 0;
 }
-

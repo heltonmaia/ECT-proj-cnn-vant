@@ -19,6 +19,7 @@ também o veic mais perto dele
 '''
 def mais_prox(obj, lista):
     dist = 999999
+    gon = 0
     for future in lista:
         prov = obj.get_mynorm(future)
         if prov < dist:

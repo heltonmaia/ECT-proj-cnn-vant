@@ -1,0 +1,4 @@
+train 1:
+  date: Fri Jul 17 15:53:39 UTC 2020
+  config: yolov4-tiny-416-3l
+

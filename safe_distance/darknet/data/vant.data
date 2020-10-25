@@ -1,5 +1,0 @@
-classes=3
-train=./darknet/obj.names
-valid=./darknet/obj.names
-names=./darknet/data/obj.names
-backup=./darknet/backup/
