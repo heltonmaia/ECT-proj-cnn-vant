@@ -4,7 +4,6 @@ from itertools import combinations
 import cv2
 import re
 import numpy as np
-import matplotlib.pyplot as plt
 import math as m 
 import os
 import sys

@@ -4,7 +4,7 @@ import numpy as np
 from scipy.spatial import distance
 from collections import OrderedDict
 
-class ObjectTracker():
+class CentroidTracker():
     def __init__(self, maxDisappeared=30):
         # the id of the next object to be included
         self.nextObjectID = 0
@@ -49,16 +49,27 @@ class ObjectTracker():
                 self.register(centroid)
 
         else:
+            # filtragem
+            tmp_dist = distance.cdist(centroids, centroids)
+            print(tmp_dist)
+
             objIDS = list(self.objects.keys())
             objs = list(self.objects.values())
             distances = distance.cdist(np.array(objs), centroids);
             
             minObjs = np.argmin(distances, axis=1);
+    
             # vc pode pegar os minimos de cada linha
             # dps vc registra os valores unicos
             # dps vc da sort nos que sobraram com o msm indice
             # a lista distances sera util
             
+            print('\n')
+            print("objs: ", objs)
+            print('\n')
+            print("centroids: ", centroids)
+            print('\n')
+            print("minObjs: ", minObjs)
             idx_to_update, idx_centroids = [], []
 
             # vai adicionando os centroids novos dos respectivos objetos
@@ -71,7 +82,7 @@ class ObjectTracker():
                     repeated_obj = idx_to_update[idx_centroids.index(cent_idx)]
                     previous_distance = distances[repeated_obj, cent_idx]
                     if min(distances[obj_idx, cent_idx], previous_distance) != previous_distance:
-                        idx_to_update.remove(repeate_obj)
+                        idx_to_update.remove(repeated_obj)
                         idx_centroids.remove(cent_idx)
                         idx_to_update.append(obj_idx)
                         idx_centroids.append(cent_idx)
@@ -87,7 +98,7 @@ class ObjectTracker():
                 if obj_idx not in idx_centroids:
                     self.disappeared[objIDS[obj_idx]] += 1
                     if self.disappeared[objIDS[obj_idx]] > self.maxDisappeared:
-                        deregister(objIDS[obj_idx])
+                        self.deregister(objIDS[obj_idx])
 
             # if dont have objects which match distance with an input centroid, then this centroid is a new object
             for centroidIdx, centroid in enumerate(centroids):

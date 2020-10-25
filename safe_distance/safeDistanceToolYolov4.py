@@ -1,8 +1,10 @@
-from pydarknet import Detector, Image
+from yolov4.tf import YOLOv4
 from math import sqrt
 from object_trackers.veloc import *
 from progress.bar import Bar
+from utils import *
 
+import numpy as np
 import pandas as pd
 import cv2 as cv
 import argparse
@@ -11,16 +13,15 @@ import os
 
 from object_trackers.centroidTracker import *
 
-os.environ['DARKNET_HOME'] = '/darknet/'
+def draw_ids(objects, frame):
+    for idx, centroid in objects.items():
+        position = (centroid[0], centroid[1]) 
+        cv2.putText(frame, "ID: {}".format(idx), position,
+                    cv2.FONT_HERSHEY_TRIPLEX, 0.7, (255, 255, 255))
 
 def parse_args():
     parser = argparse.ArgumentParser(
         description='Process a video with the YOLO object detector'
-    )
-
-    parser.add_argument(
-        'cfg', type=str,
-        help='Path to yolo configuration file'
     )
 
     parser.add_argument(
@@ -57,15 +58,16 @@ def parse_args():
 
 if __name__ == '__main__':
     args = parse_args()
-    
-    # Instanciate the YOLO detector
-    net = Detector(
-        bytes(args.cfg, encoding='utf-8'),
-        bytes(args.weight, encoding='utf-8'),
-        0,
-        bytes(args.data, encoding='utf-8')
-    )
 
+    # init the object tracker
+    tracker = CentroidTracker()
+
+    # init the model
+    yolo = YOLOv4(isTiny(bytes(args.weight, encoding="utf-8")))
+    yolo.classes = namePath(bytes(args.data, encoding="utf-8"))
+    yolo.make_model()
+    yolo.load_weights(bytes(args.weight, encoding="utf-8"), weights_type="yolo")
+    
     cap = cv.VideoCapture(args.video)
     bar = Bar('Processing Frames', max=int(cap.get(cv.CAP_PROP_FRAME_COUNT)))
     width  = int(cap.get(3))
@@ -114,9 +116,12 @@ if __name__ == '__main__':
         if(not ret):
             break
 
-        dark_frame = Image(frame)
-        results = net.detect(dark_frame)
-        del dark_frame
+        # results shape like (n_boxes, (x, y, w, h, class_id, prob))
+        results = infer(yolo, frame)
+
+        # values in float between [0, 1] to int values
+        results[:, [0, 2]] = results[:, [0, 2]] * width
+        results[:, [1, 3]] = results[:, [1, 3]] * height
 
         # with open(f'{args.output}.txt', 'a') as file:
         #     file.write(str(results) + '\n')
@@ -132,14 +137,13 @@ if __name__ == '__main__':
 
         resultsInsideRoi = []
         for result in results:
-            _, _, (x, y, w, h) = result
+            x, y, w, h, _, _ = result
 
             if(roiX <= x <= roiX+roiW and roiY <= y <= roiY+roiH):
                 resultsInsideRoi.append(result)
         listFrame = []
-        for index, (className, score, bounds) in enumerate(resultsInsideRoi):
-            className = str(className.decode("utf-8")) + str(index)
-            x, y, w, h = bounds
+        for index, (x, y, w, h, class_id, score) in enumerate(resultsInsideRoi):
+            className = class_name(class_id) + ' ' + str(index)
             listFrame.append(Veic([className, score, x, y, w, h]))
             
             # Bounding box
@@ -157,7 +161,7 @@ if __name__ == '__main__':
             )
 
             for result in resultsInsideRoi:
-                _, _, (nextX, nextY, nextW, nextH) = result
+                nextX, nextY, nextW, nextH, _, _ = result
 
                 if(int(nextY) in list(range(int(y) - 50, int(y) + 50))):
                     
@@ -187,13 +191,11 @@ if __name__ == '__main__':
                         )
 
                     break
-        if (not first):
-            memory.set_frame(listFrame)
-        else:
-            memory = List_Veic(listFrame)
-            first = False
-        for veic in memory.l:
-            cv.putText(frame, str(veic.mean_veloc)[0:4], (veic.x, veic.y), cv.FONT_HERSHEY_COMPLEX, 0.9, (0,255,0))
+
+        # tracking
+        centroids = [(int(x), int(y)) for (x, y, _, _, _, _) in resultsInsideRoi]  
+        tracker.update(centroids)
+        draw_ids(tracker.objects, frame)
 
         if(args.debug):
             cv.imshow(main_win, frame)

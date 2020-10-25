@@ -1,5 +1,5 @@
 classes=3
 train=/
 valid=/
-names=./classes.names
+names=/home/yes0/repos/ECT-proj-cnn-vant/darknet_files/dataset/classes.names
 backup=backup/
