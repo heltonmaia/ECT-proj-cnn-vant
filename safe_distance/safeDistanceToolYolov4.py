@@ -1,6 +1,6 @@
+from object_trackers.centroidTracker import *
 from yolov4.tf import YOLOv4
 from math import sqrt
-from object_trackers.veloc import *
 from progress.bar import Bar
 from utils import *
 
@@ -11,13 +11,6 @@ import argparse
 import time
 import os
 
-from object_trackers.centroidTracker import *
-
-def draw_ids(objects, frame):
-    for idx, centroid in objects.items():
-        position = (centroid[0], centroid[1]) 
-        cv2.putText(frame, "ID: {}".format(idx), position,
-                    cv2.FONT_HERSHEY_TRIPLEX, 0.7, (255, 255, 255))
 
 def parse_args():
     parser = argparse.ArgumentParser(
@@ -28,7 +21,6 @@ def parse_args():
         'data', type=str,
         help='Path to network data file'
     )
-
     parser.add_argument(
         'weight', type=str,
         help='Path to the weights file'
@@ -59,10 +51,10 @@ def parse_args():
 if __name__ == '__main__':
     args = parse_args()
 
-    # init the object tracker
+    # Init the object tracker
     tracker = CentroidTracker()
 
-    # init the model
+    # Init the model
     yolo = YOLOv4(isTiny(bytes(args.weight, encoding="utf-8")))
     yolo.classes = namePath(bytes(args.data, encoding="utf-8"))
     yolo.make_model()
@@ -141,11 +133,18 @@ if __name__ == '__main__':
 
             if(roiX <= x <= roiX+roiW and roiY <= y <= roiY+roiH):
                 resultsInsideRoi.append(result)
-        listFrame = []
+
+        # Tracking
+        centroids = [(int(x), int(y)) for (x, y, _, _, _, _) in resultsInsideRoi]  
+        tracker.update(centroids)
+
         for index, (x, y, w, h, class_id, score) in enumerate(resultsInsideRoi):
-            className = class_name(class_id) + ' ' + str(index)
-            listFrame.append(Veic([className, score, x, y, w, h]))
-            
+
+            # Getting the object id, from tracker
+            for obj_id, (centroid, dissapeared) in enumerate(zip(tracker.objects.values(), tracker.disappeared.values())):
+                if int(x) == centroid[0] and int(y) == centroid[1] and dissapeared == 0:
+                    className = class_name(class_id) + '-' + str(obj_id) 
+
             # Bounding box
             cv.rectangle(
                 frame,
@@ -192,10 +191,6 @@ if __name__ == '__main__':
 
                     break
 
-        # tracking
-        centroids = [(int(x), int(y)) for (x, y, _, _, _, _) in resultsInsideRoi]  
-        tracker.update(centroids)
-        draw_ids(tracker.objects, frame)
 
         if(args.debug):
             cv.imshow(main_win, frame)

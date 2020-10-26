@@ -39,6 +39,11 @@ user@computer:~$ conda activate <enviroment_name>
 (<enviroment_name>) user@computer:~$ pip install yolo34py-gpu
 ```
 
+If you want to use YOLOv4, install these dependencies too:
+```console
+(<enviroment_name>) user@computer:~$ pip install tensorflow yolov4
+```
+
 ## Installing Darknet
 
 First clone the [repository](First clone the [repository](https://gitlab.com/helton.maia/proj-cnn-vant) and complie the source code. This can be accomplished by:

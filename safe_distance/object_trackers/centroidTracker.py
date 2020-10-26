@@ -49,10 +49,6 @@ class CentroidTracker():
                 self.register(centroid)
 
         else:
-            # filtragem
-            tmp_dist = distance.cdist(centroids, centroids)
-            print(tmp_dist)
-
             objIDS = list(self.objects.keys())
             objs = list(self.objects.values())
             distances = distance.cdist(np.array(objs), centroids);
@@ -64,12 +60,6 @@ class CentroidTracker():
             # dps vc da sort nos que sobraram com o msm indice
             # a lista distances sera util
             
-            print('\n')
-            print("objs: ", objs)
-            print('\n')
-            print("centroids: ", centroids)
-            print('\n')
-            print("minObjs: ", minObjs)
             idx_to_update, idx_centroids = [], []
 
             # vai adicionando os centroids novos dos respectivos objetos

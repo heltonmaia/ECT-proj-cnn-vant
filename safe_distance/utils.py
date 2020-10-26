@@ -17,7 +17,7 @@ def namePath(data):
         if 'names' in line:
             return line.split('=')[1][0:-1]
 
-def infer(model, frame, iou_thresh=0.5, score_thresh=0.75, show_time=False):
+def infer(model, frame, iou_thresh=0.2, score_thresh=0.6, show_time=False):
     resized_image = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
     resized_image = model.resize_image(resized_image)
 
@@ -46,7 +46,6 @@ def infer(model, frame, iou_thresh=0.5, score_thresh=0.75, show_time=False):
     if show_time:
         exec_time = time.time() - start_time
         print("time: {:.2f} ms".format(exec_time * 1000))
-
     return pred_bboxes
 
 def class_name(class_id):
