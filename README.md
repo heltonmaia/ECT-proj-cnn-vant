@@ -108,7 +108,7 @@ This script aims to track and detect the safe distance between vehicles. Usage:
 ```console
 (<environment_name>) user@computer:~ $ git clone https://github.com/vitoryeso/ECT-proj-cnn-vant.git
 (<environment_name>) user@computer:~ $ cd proj-cnn-vant/safe_distance
-(<environment_name>) user@computer:~/proj-cnn-vant/safe_distance $ python safeDistanceTool.py weight video output [--iou-thresh IOU_THRESH] [--score-thresh SCORE_THRESHi] [-h] [--debug] [--save-video]
+(<environment_name>) user@computer:~/proj-cnn-vant/safe_distance $ python safeDistanceToolYolov4.py weight video output [--iou-thresh IOU_THRESH] [--score-thresh SCORE_THRESHi] [-h] [--debug] [--save-video]
 ```
 
 ## Weights
@@ -132,8 +132,8 @@ The latest weights used in the work can be downloaded here:
 * *-h*, *--help*: Show this help message and exit
 * *--debug*: Shows a window with debugging information during video classification.
 * *--save-video*: Create a video file with the analysis result.
-* *--iou-thresh*: Set the [IOU](https://www.pyimagesearch.com/2016/11/07/intersection-over-union-iou-for-object-detection/) threshold for consider a detection (only for YOLOv4)
-* *--score-thresh*: Set the probability score threshold for consider a detection (only for YOLOv4)
+* *--iou-thresh*: Set the [IOU](https://www.pyimagesearch.com/2016/11/07/intersection-over-union-iou-for-object-detection/) threshold for consider a detection (only for YOLOv4). Default is 0.4.
+* *--score-thresh*: Set the probability score threshold for consider a detection (only for YOLOv4). Default is 0.6.
 
 **Avalible commands**:
 

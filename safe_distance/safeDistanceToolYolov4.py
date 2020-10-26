@@ -34,7 +34,7 @@ def parse_args():
 
     parser.add_argument(
         '--iou-thresh', action='store', type=float,
-        default=0.2,
+        default=0.4,
         help='Value between [0, 1] for the IOU threshold'
     )
 
