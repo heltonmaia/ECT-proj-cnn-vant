@@ -2,7 +2,7 @@
 
 ![safeDistance](./readme_imgs/distanceTool.png)
 
-The frames captured from the user provided video are then fed into the YOLOv3 or [YOLOv4](#using-yolov4-for-detection) algorithm, where the vehicles detection is done. With the YOLO detections our algorithm then calculates the center of mass of each bounding box founded for then using the Euclidean method calculate the distance to the closest car. The detected class, index and distance to the closest detected vehicle are respectively shown above each bounding box.
+The frames captured from the user provided video are then fed into the [YOLOv3](#using-yolov3-for-detection) or [YOLOv4](#using-yolov4-for-detection) algorithm, where the vehicles detection is done. With the YOLO detections our algorithm then calculates the center of mass of each bounding box founded for then using the Euclidean method calculate the distance to the closest car. The detected class, index and distance to the closest detected vehicle are respectively shown above each bounding box.
 
 This project **was developed and tested for Ubuntu 16.04 and 18.04.**
 
@@ -129,6 +129,8 @@ The latest weights used in the work can be downloaded here:
 * *-h*, *--help*: Show this help message and exit
 * *--debug*: Shows a window with debugging information during video classification.
 * *--save-video*: Create a video file with the analysis result.
+* *--iou-thresh*: Set the [IOU](https://www.pyimagesearch.com/2016/11/07/intersection-over-union-iou-for-object-detection/) threshold for consider a detection (only for YOLOv4)
+* *--score-thresh*: Set the probability score threshold for consider a detection (only for YOLOv4)
 
 **Avalible commands**:
 
