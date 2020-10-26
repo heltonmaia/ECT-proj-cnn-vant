@@ -27,19 +27,19 @@ The darknet's python wrapper here present is based in [madhawav](https://github.
 
 * CuDNN (only for GPU acceleration): [Install Guide](https://github.com/vanluwin/enviroment#install-cudnn)
 
-### Using a python enviroment
+### Using a python environment
 
-This section is a guide to the instalations of a python enviroment with the requirements of this repository.
+This section is a guide to the instalations of a python environment with the requirements of this repository.
 
 First install [Anaconda](https://www.anaconda.com/distribution/) or [Miniconda](https://docs.conda.io/en/latest/miniconda.html), both of them give you similar results but the latter requires less disk space.
 
 Now create a python virtual environment and install the required packages following the commands. Substitute **<environment_name>** with a name for your environment
 
 ```console
-user@computer:~$ conda create -n <enviroment_name> anaconda python=3
-user@computer:~$ conda activate <enviroment_name>
-(<enviroment_name>) user@computer:~$ conda install -c loopbio -c conda-forge -c pkgw-forge ffmpeg gtk2 opencv numpy scipy matplotlib cython pip
-(<enviroment_name>) user@computer:~$ pip install yolo34py-gpu
+user@computer:~$ conda create -n <environment_name> anaconda python=3
+user@computer:~$ conda activate <environment_name>
+(<environment_name>) user@computer:~$ conda install -c loopbio -c conda-forge -c pkgw-forge ffmpeg gtk2 opencv numpy scipy matplotlib cython pip
+(<environment_name>) user@computer:~$ pip install yolo34py-gpu
 ```
 
 ### Installing Darknet
@@ -54,10 +54,10 @@ user@computer:~/proj-cnn-vant/darknet $ make
 
 ### Using the scripts
 
-To use the provided scripts make sure to activate your python enviroment, that can be acomplished by:
+To use the provided scripts make sure to activate your python environment, that can be acomplished by:
 
 ```console
-user@computer:~$ conda activate <enviroment_name>
+user@computer:~$ conda activate <environment_name>
 ```
 
 ### The Safe Distance Analyser
@@ -65,7 +65,7 @@ user@computer:~$ conda activate <enviroment_name>
 This script aims to track and detect the safe distance between vehicles. Usage:
 
 ```console
-(<enviroment_name>) user@computer:~/proj-cnn-vant $ python safeDistanceTool.py cfg data weight video output [-h] [--debug] [--save-video]
+(<environment_name>) user@computer:~/proj-cnn-vant $ python safeDistanceTool.py cfg data weight video output [-h] [--debug] [--save-video]
 ```
 
 ## Using YOLOv4 for detection
@@ -78,27 +78,27 @@ This script aims to track and detect the safe distance between vehicles. Usage:
 
 * CuDNN (only for GPU acceleration): [Install Guide](https://github.com/vanluwin/enviroment#install-cudnn)
 
-### Using a python enviroment
+### Using a python environment
 
-This section is a guide to the instalations of a python enviroment with the requirements of this repository.
+This section is a guide to the instalations of a python environment with the requirements of this repository.
 
 First install [Anaconda](https://www.anaconda.com/distribution/) or [Miniconda](https://docs.conda.io/en/latest/miniconda.html), both of them give you similar results but the latter requires less disk space.
 
 Now create a python virtual environment and install the required packages following the commands. Substitute **<environment_name>** with a name for your environment
 
 ```console
-user@computer:~$ conda create -n <enviroment_name> anaconda python=3
-user@computer:~$ conda activate <enviroment_name>
-(<enviroment_name>) user@computer:~$ conda install -c loopbio -c conda-forge -c pkgw-forge ffmpeg gtk2 opencv numpy scipy matplotlib pip
-(<enviroment_name>) user@computer:~$ pip install tensorflow yolov4
+user@computer:~$ conda create -n <environment_name> anaconda python=3
+user@computer:~$ conda activate <environment_name>
+(<environment_name>) user@computer:~$ conda install -c loopbio -c conda-forge -c pkgw-forge ffmpeg gtk2 opencv numpy scipy matplotlib pip
+(<environment_name>) user@computer:~$ pip install tensorflow yolov4
 ```
 
 ### Using the scripts
 
-To use the provided scripts make sure to activate your python enviroment, that can be acomplished by:
+To use the provided scripts make sure to activate your python environment, that can be acomplished by:
 
 ```console
-user@computer:~$ conda activate <enviroment_name>
+user@computer:~$ conda activate <environment_name>
 ```
 
 ### The Safe Distance Analyser
@@ -115,6 +115,7 @@ This script aims to track and detect the safe distance between vehicles. Usage:
 
 The latest weights used in the work can be downloaded here:
 [YOLOv4 416x416](https://drive.google.com/file/d/1-1EfrW3xv_3vlkfXO-fRrChGJL60fGy3/view?usp=sharing)
+[YOLOv4 Tiny 608x608](https://drive.google.com/file/d/100he6HKSCWE68r_TCNX4Gzf7KQpBm2dr/view?usp=sharing)
 
 **Required arguments**:
 
