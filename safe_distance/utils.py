@@ -10,13 +10,6 @@ def isTiny(weight):
         return True
     return False
 
-def namePath(data):
-    arq = open(data, 'r')
-    while(1):
-        line = arq.readline()
-        if 'names' in line:
-            return line.split('=')[1][0:-1]
-
 def infer(model, frame, iou_thresh=0.2, score_thresh=0.6, show_time=False):
     resized_image = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
     resized_image = model.resize_image(resized_image)

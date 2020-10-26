@@ -2,7 +2,7 @@
 
 ![safeDistance](./readme_imgs/distanceTool.png)
 
-The frames captured from the user provided video are then fed into the YOLOv3 algorithm, where the vehicles detection is done. With the YOLO detections our algorithm then calculates the center of mass of each bounding box founded for then using the Euclidean method calculate the distance to the closest car. The detected class, index and distance to the closest detected vehicle are respectively shown above each bounding box.
+The frames captured from the user provided video are then fed into the YOLOv3 or [YOLOv4](#using-yolov4-for-detection) algorithm, where the vehicles detection is done. With the YOLO detections our algorithm then calculates the center of mass of each bounding box founded for then using the Euclidean method calculate the distance to the closest car. The detected class, index and distance to the closest detected vehicle are respectively shown above each bounding box.
 
 This project **was developed and tested for Ubuntu 16.04 and 18.04.**
 
@@ -12,19 +12,22 @@ The darknet framework present here is a reimplementation based in [pjreddie](htt
 
 The darknet's python wrapper here present is based in [madhawav](https://github.com/madhawav/YOLO3-4-Py) work.
 
-## Requirements
 
-* Nvidia Drivers: [Install Guide](https://github.com/vanluwin/enviroment/#install-nvidia-gpu-drivers)
+## Using YOLOv3 for detection
 
-* CUDA: [Install Guide](https://github.com/vanluwin/enviroment#install-cuda)
-
-* CuDNN: [Install Guide](https://github.com/vanluwin/enviroment#install-cudnn)
+### Requirements
 
 * GCC/G++: [Install Guide](https://github.com/vanluwin/enviroment#change-gccg-version)
 
 * OpenCV: [Install Guide](https://github.com/vanluwin/enviroment/#install-opencv)
 
-## Using a python enviroment
+* Nvidia Drivers (only for GPU acceleration): [Install Guide](https://github.com/vanluwin/enviroment/#install-nvidia-gpu-drivers)
+
+* CUDA (only for GPU acceleration): [Install Guide](https://github.com/vanluwin/enviroment#install-cuda)
+
+* CuDNN (only for GPU acceleration): [Install Guide](https://github.com/vanluwin/enviroment#install-cudnn)
+
+### Using a python enviroment
 
 This section is a guide to the instalations of a python enviroment with the requirements of this repository.
 
@@ -39,12 +42,7 @@ user@computer:~$ conda activate <enviroment_name>
 (<enviroment_name>) user@computer:~$ pip install yolo34py-gpu
 ```
 
-If you want to use YOLOv4, install these dependencies too:
-```console
-(<enviroment_name>) user@computer:~$ pip install tensorflow yolov4
-```
-
-## Installing Darknet
+### Installing Darknet
 
 First clone the [repository](First clone the [repository](https://gitlab.com/helton.maia/proj-cnn-vant) and complie the source code. This can be accomplished by:
 
@@ -54,11 +52,7 @@ user@computer:~ $ cd proj-cnn-vant/darknet
 user@computer:~/proj-cnn-vant/darknet $ make
 ```
 
-## Weights
-
-The latest weights used in the work can be downloaded here:
-
-## Using the scripts
+### Using the scripts
 
 To use the provided scripts make sure to activate your python enviroment, that can be acomplished by:
 
@@ -66,7 +60,7 @@ To use the provided scripts make sure to activate your python enviroment, that c
 user@computer:~$ conda activate <enviroment_name>
 ```
 
-## The Safe Distance Analyser
+### The Safe Distance Analyser
 
 This script aims to track and detect the safe distance between vehicles. Usage:
 
@@ -74,10 +68,58 @@ This script aims to track and detect the safe distance between vehicles. Usage:
 (<enviroment_name>) user@computer:~/proj-cnn-vant $ python safeDistanceTool.py cfg data weight video output [-h] [--debug] [--save-video]
 ```
 
+## Using YOLOv4 for detection
+
+### Requirements
+
+* Nvidia Drivers (only for GPU acceleration): [Install Guide](https://github.com/vanluwin/enviroment/#install-nvidia-gpu-drivers)
+
+* CUDA (only for GPU acceleration): [Install Guide](https://github.com/vanluwin/enviroment#install-cuda)
+
+* CuDNN (only for GPU acceleration): [Install Guide](https://github.com/vanluwin/enviroment#install-cudnn)
+
+### Using a python enviroment
+
+This section is a guide to the instalations of a python enviroment with the requirements of this repository.
+
+First install [Anaconda](https://www.anaconda.com/distribution/) or [Miniconda](https://docs.conda.io/en/latest/miniconda.html), both of them give you similar results but the latter requires less disk space.
+
+Now create a python virtual environment and install the required packages following the commands. Substitute **<environment_name>** with a name for your environment
+
+```console
+user@computer:~$ conda create -n <enviroment_name> anaconda python=3
+user@computer:~$ conda activate <enviroment_name>
+(<enviroment_name>) user@computer:~$ conda install -c loopbio -c conda-forge -c pkgw-forge ffmpeg gtk2 opencv numpy scipy matplotlib pip
+(<enviroment_name>) user@computer:~$ pip install tensorflow yolov4
+```
+
+### Using the scripts
+
+To use the provided scripts make sure to activate your python enviroment, that can be acomplished by:
+
+```console
+user@computer:~$ conda activate <enviroment_name>
+```
+
+### The Safe Distance Analyser
+
+This script aims to track and detect the safe distance between vehicles. Usage:
+
+```console
+(<environment_name>) user@computer:~ $ git clone https://github.com/vitoryeso/ECT-proj-cnn-vant.git
+(<environment_name>) user@computer:~ $ cd proj-cnn-vant/safe_distance
+(<environment_name>) user@computer:~/proj-cnn-vant/safe_distance $ python safeDistanceTool.py weight video output [--iou-thresh IOU_THRESH] [--score-thresh SCORE_THRESHi] [-h] [--debug] [--save-video]
+```
+
+## Weights
+
+The latest weights used in the work can be downloaded here:
+[YOLOv4 416x416](https://drive.google.com/file/d/1-1EfrW3xv_3vlkfXO-fRrChGJL60fGy3/view?usp=sharing)
+
 **Required arguments**:
 
-* *cfg*: Path to yolo configuration file.
-* *data*: Path to network data file.
+* *cfg*: Path to yolo configuration file. (only for YOLOv3)
+* *data*: Path to network data file. (only for YOLOv3)
 * *weight*: Path to the weights file.
 * *video*: Path to source video.
 * *output*: Name of the log file to be produced.

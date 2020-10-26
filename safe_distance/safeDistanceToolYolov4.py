@@ -18,10 +18,6 @@ def parse_args():
     )
 
     parser.add_argument(
-        'data', type=str,
-        help='Path to network data file'
-    )
-    parser.add_argument(
         'weight', type=str,
         help='Path to the weights file'
     )
@@ -34,6 +30,18 @@ def parse_args():
     parser.add_argument(
         'output', type=str,
         help='Name of the log file to be produced'
+    )
+
+    parser.add_argument(
+        '--iou-thresh', action='store', type=float,
+        default=0.2,
+        help='Value between [0, 1] for the IOU threshold'
+    )
+
+    parser.add_argument(
+        '--score-thresh', action='store', type=float,
+        default=0.6,
+        help='Value between [0, 1] for the probability score threshold'
     )
 
     parser.add_argument(
@@ -56,7 +64,7 @@ if __name__ == '__main__':
 
     # Init the model
     yolo = YOLOv4(isTiny(bytes(args.weight, encoding="utf-8")))
-    yolo.classes = namePath(bytes(args.data, encoding="utf-8"))
+    yolo.classes = "../darknet_files/dataset/classes.names"
     yolo.make_model()
     yolo.load_weights(bytes(args.weight, encoding="utf-8"), weights_type="yolo")
     
@@ -109,7 +117,7 @@ if __name__ == '__main__':
             break
 
         # results shape like (n_boxes, (x, y, w, h, class_id, prob))
-        results = infer(yolo, frame)
+        results = infer(yolo, frame, args.iou_thresh, args.score_thresh)
 
         # values in float between [0, 1] to int values
         results[:, [0, 2]] = results[:, [0, 2]] * width
