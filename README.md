@@ -114,7 +114,9 @@ This script aims to track and detect the safe distance between vehicles. Usage:
 ## Weights
 
 The latest weights used in the work can be downloaded here:
+
 [YOLOv4 416x416](https://drive.google.com/file/d/1-1EfrW3xv_3vlkfXO-fRrChGJL60fGy3/view?usp=sharing)
+
 [YOLOv4 Tiny 608x608](https://drive.google.com/file/d/100he6HKSCWE68r_TCNX4Gzf7KQpBm2dr/view?usp=sharing)
 
 **Required arguments**:
