@@ -4,10 +4,6 @@
 #include "blas.h"
 #include "utils.h"
 
-#ifdef OPENCV
-#include "opencv2/highgui/highgui_c.h"
-#endif
-
 // ./darknet nightmare cfg/extractor.recon.cfg ~/trained/yolo-coco.conv frame6.png -reconstruct -iters 500 -i 3 -lambda .1 -rate .01 -smooth 2
 
 float abs_mean(float *x, int n)
@@ -23,7 +19,7 @@ float abs_mean(float *x, int n)
 void calculate_loss(float *output, float *delta, int n, float thresh)
 {
     int i;
-    float mean = mean_array(output, n); 
+    float mean = mean_array(output, n);
     float var = variance_array(output, n);
     for(i = 0; i < n; ++i){
         if(delta[i] > mean + thresh*sqrt(var)) delta[i] = output[i];
@@ -181,7 +177,7 @@ void reconstruct_picture(network net, float *features, image recon, image update
 
 void run_nightmare(int argc, char **argv)
 {
-    srand(0);
+    srand(time(0));
     if(argc < 4){
         fprintf(stderr, "usage: %s %s [cfg] [weights] [image] [layer] [options! (optional)]\n", argv[0], argv[1]);
         return;
@@ -260,7 +256,7 @@ void run_nightmare(int argc, char **argv)
     for(e = 0; e < rounds; ++e){
         fprintf(stderr, "Iteration: ");
         fflush(stderr);
-        for(n = 0; n < iters; ++n){  
+        for(n = 0; n < iters; ++n){
             fprintf(stderr, "%d, ", n);
             fflush(stderr);
             if(reconstruct){
@@ -268,7 +264,7 @@ void run_nightmare(int argc, char **argv)
                 //if ((n+1)%30 == 0) rate *= .5;
                 show_image(im, "reconstruction");
 #ifdef OPENCV
-                cvWaitKey(10);
+                wait_key_cv(10);
 #endif
             }else{
                 int layer = max_layer + rand()%range - range/2;
@@ -291,7 +287,7 @@ void run_nightmare(int argc, char **argv)
         printf("%d %s\n", e, buff);
         save_image(im, buff);
         //show_image(im, buff);
-        //cvWaitKey(0);
+        //wait_key_cv(0);
 
         if(rotate){
             image rot = rotate_image(im, rotate);
@@ -305,4 +301,3 @@ void run_nightmare(int argc, char **argv)
         im = resized;
     }
 }
-

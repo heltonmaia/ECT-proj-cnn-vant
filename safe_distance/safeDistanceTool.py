@@ -1,13 +1,16 @@
 from pydarknet import Detector, Image
 from math import sqrt
-from veloc import *
+from object_trackers.veloc import *
 from progress.bar import Bar
+from utils import *
 
 import pandas as pd
 import cv2 as cv
 import argparse
 import time
 import os
+
+from object_trackers.centroidTracker import *
 
 os.environ['DARKNET_HOME'] = '/darknet/'
 
@@ -56,6 +59,9 @@ def parse_args():
 if __name__ == '__main__':
     args = parse_args()
     
+    # Init the object tracker
+    tracker = CentroidTracker()
+
     # Instanciate the YOLO detector
     net = Detector(
         bytes(args.cfg, encoding='utf-8'),
@@ -89,7 +95,7 @@ if __name__ == '__main__':
     ret, frame = cap.read()
 
     if(not ret):
-        print('Error readning video stream')
+        print('Error reading video stream')
         exit()
 
     roi_win = 'Select ROI for proximity detection'
@@ -128,17 +134,25 @@ if __name__ == '__main__':
             #(237, 147, 78), 2
         )
 
+
         resultsInsideRoi = []
         for result in results:
             _, _, (x, y, w, h) = result
 
             if(roiX <= x <= roiX+roiW and roiY <= y <= roiY+roiH):
                 resultsInsideRoi.append(result)
-        listFrame = []
+
+        # Tracking
+        centroids = [(int(x), int(y)) for (x, y, _, _, _, _) in resultsInsideRoi]  
+        tracker.update(centroids)
+
         for index, (className, score, bounds) in enumerate(resultsInsideRoi):
-            className = str(className.decode("utf-8")) + str(index)
             x, y, w, h = bounds
-            listFrame.append(Veic([className, score, x, y, w, h]))
+
+            # Getting the object id, from tracker
+            for obj_id, (centroid, dissapeared) in enumerate(zip(tracker.objects.values(), tracker.disappeared.values())):
+                if int(x) == centroid[0] and int(y) == centroid[1] and dissapeared == 0:
+                    className = class_name(class_id) + '-' + str(obj_id) 
             
             # Bounding box
             cv.rectangle(
@@ -185,13 +199,6 @@ if __name__ == '__main__':
                         )
 
                     break
-        if (not first):
-            memory.set_frame(listFrame)
-        else:
-            memory = List_Veic(listFrame)
-            first = False
-        for veic in memory.l:
-            cv.putText(frame, str(veic.mean_veloc)[0:4], (veic.x, veic.y), cv.FONT_HERSHEY_COMPLEX, 0.9, (0,255,0))
 
         if(args.debug):
             cv.imshow(main_win, frame)

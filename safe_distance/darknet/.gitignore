@@ -7,7 +7,10 @@
 *.so
 *.exe
 *.dll
+*.lib
+*.dylib
 mnist/
+data/
 caffe/
 grasp/
 images/
@@ -15,18 +18,24 @@ opencv/
 convnet/
 decaf/
 submission/
+cfg/
 build/darknet/*
 build_*/
 !build/darknet/YoloWrapper.cs
 .fuse*
 *.weights
-*.avi
-predictions.jpg
-darknet
+build/*.cmake
+build/*.ninja
+build/*.txt
+build/*.json
+build/CMakeFiles/
+build/detect_cuda_compute_capabilities.cu
+build/.ninja_deps
+build/.ninja_log
+build/Makefile
 
 # OS Generated #
 .DS_Store*
-.directory
 ehthumbs.db
 Icon?
 Thumbs.db
@@ -36,6 +45,13 @@ Thumbs.db
 .vs/
 .vscode/
 
+# Managed by CMake
+src/version.h
+
+# Build artifacts
 lib/
-include/
 share/
+include/darknet/
+uselib
+uselib_track
+darknet

@@ -1,0 +1,25 @@
+net.optimized_memory = 0 
+mini_batch = 1, batch = 16, time_steps = 1, train = 0 
+nms_kind: greedynms (1), beta = 0.600000 
+nms_kind: greedynms (1), beta = 0.600000 
+nms_kind: greedynms (1), beta = 0.600000 
+
+ seen 64, trained: 64 K-images (1 Kilo-batches_64) 
+
+ calculation mAP (mean average precision)...
+
+ detections_count = 9757, unique_truth_count = 3827  
+ rank = 0 of ranks = 9757  rank = 100 of ranks = 9757  rank = 200 of ranks = 9757  rank = 300 of ranks = 9757  rank = 400 of ranks = 9757  rank = 500 of ranks = 9757  rank = 600 of ranks = 9757  rank = 700 of ranks = 9757  rank = 800 of ranks = 9757  rank = 900 of ranks = 9757  rank = 1000 of ranks = 9757  rank = 1100 of ranks = 9757  rank = 1200 of ranks = 9757  rank = 1300 of ranks = 9757  rank = 1400 of ranks = 9757  rank = 1500 of ranks = 9757  rank = 1600 of ranks = 9757  rank = 1700 of ranks = 9757  rank = 1800 of ranks = 9757  rank = 1900 of ranks = 9757  rank = 2000 of ranks = 9757  rank = 2100 of ranks = 9757  rank = 2200 of ranks = 9757  rank = 2300 of ranks = 9757  rank = 2400 of ranks = 9757  rank = 2500 of ranks = 9757  rank = 2600 of ranks = 9757  rank = 2700 of ranks = 9757  rank = 2800 of ranks = 9757  rank = 2900 of ranks = 9757  rank = 3000 of ranks = 9757  rank = 3100 of ranks = 9757  rank = 3200 of ranks = 9757  rank = 3300 of ranks = 9757  rank = 3400 of ranks = 9757  rank = 3500 of ranks = 9757  rank = 3600 of ranks = 9757  rank = 3700 of ranks = 9757  rank = 3800 of ranks = 9757  rank = 3900 of ranks = 9757  rank = 4000 of ranks = 9757  rank = 4100 of ranks = 9757  rank = 4200 of ranks = 9757  rank = 4300 of ranks = 9757  rank = 4400 of ranks = 9757  rank = 4500 of ranks = 9757  rank = 4600 of ranks = 9757  rank = 4700 of ranks = 9757  rank = 4800 of ranks = 9757  rank = 4900 of ranks = 9757  rank = 5000 of ranks = 9757  rank = 5100 of ranks = 9757  rank = 5200 of ranks = 9757  rank = 5300 of ranks = 9757  rank = 5400 of ranks = 9757  rank = 5500 of ranks = 9757  rank = 5600 of ranks = 9757  rank = 5700 of ranks = 9757  rank = 5800 of ranks = 9757  rank = 5900 of ranks = 9757  rank = 6000 of ranks = 9757  rank = 6100 of ranks = 9757  rank = 6200 of ranks = 9757  rank = 6300 of ranks = 9757  rank = 6400 of ranks = 9757  rank = 6500 of ranks = 9757  rank = 6600 of ranks = 9757  rank = 6700 of ranks = 9757  rank = 6800 of ranks = 9757  rank = 6900 of ranks = 9757  rank = 7000 of ranks = 9757  rank = 7100 of ranks = 9757  rank = 7200 of ranks = 9757  rank = 7300 of ranks = 9757  rank = 7400 of ranks = 9757  rank = 7500 of ranks = 9757  rank = 7600 of ranks = 9757  rank = 7700 of ranks = 9757  rank = 7800 of ranks = 9757  rank = 7900 of ranks = 9757  rank = 8000 of ranks = 9757  rank = 8100 of ranks = 9757  rank = 8200 of ranks = 9757  rank = 8300 of ranks = 9757  rank = 8400 of ranks = 9757  rank = 8500 of ranks = 9757  rank = 8600 of ranks = 9757  rank = 8700 of ranks = 9757  rank = 8800 of ranks = 9757  rank = 8900 of ranks = 9757  rank = 9000 of ranks = 9757  rank = 9100 of ranks = 9757  rank = 9200 of ranks = 9757  rank = 9300 of ranks = 9757  rank = 9400 of ranks = 9757  rank = 9500 of ranks = 9757  rank = 9600 of ranks = 9757  rank = 9700 of ranks = 9757 class_id = 0, name = car, ap = 93.41%   	 (TP = 3168, FP = 389) 
+class_id = 1, name = bus, ap = 96.78%   	 (TP = 109, FP = 6) 
+class_id = 2, name = motorcycle, ap = 90.87%   	 (TP = 292, FP = 43) 
+
+ for conf_thresh = 0.25, precision = 0.89, recall = 0.93, F1-score = 0.91 
+ for conf_thresh = 0.25, TP = 3569, FP = 438, FN = 258, average IoU = 64.48 % 
+
+ IoU threshold = 50 %, used Area-Under-Curve for each unique Recall 
+ mean average precision (mAP@0.50) = 0.936891, or 93.69 % 
+
+Set -points flag:
+ `-points 101` for MS COCO 
+ `-points 11` for PascalVOC 2007 (uncomment `difficult` in voc.data) 
+ `-points 0` (AUC) for ImageNet, PascalVOC 2010-2012, your custom dataset

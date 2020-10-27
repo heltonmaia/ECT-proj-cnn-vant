@@ -5,14 +5,10 @@
 #include "parser.h"
 #include "box.h"
 
-#ifdef OPENCV
-#include "opencv2/highgui/highgui_c.h"
-#endif
-
 void train_swag(char *cfgfile, char *weightfile)
 {
     char *train_images = "data/voc.0712.trainval";
-    char *backup_directory = "/home/pjreddie/backup/";
+    char* backup_directory = "backup/";
     srand(time(0));
     char *base = basecfg(cfgfile);
     printf("%s\n", base);

@@ -3,6 +3,7 @@
 #include <string.h>
 #include "option_list.h"
 #include "utils.h"
+#include "data.h"
 
 list *read_data_cfg(char *filename)
 {
@@ -47,7 +48,9 @@ metadata get_metadata(char *file)
     }
     m.classes = option_find_int(options, "classes", 2);
     free_list(options);
-    printf("Loaded - names_list: %s, classes = %d \n", name_list, m.classes);
+    if(name_list) {
+        printf("Loaded - names_list: %s, classes = %d \n", name_list, m.classes);
+    }
     return m;
 }
 
@@ -71,7 +74,7 @@ int read_option(char *s, list *options)
 
 void option_insert(list *l, char *key, char *val)
 {
-    kvp *p = malloc(sizeof(kvp));
+    kvp* p = (kvp*)xmalloc(sizeof(kvp));
     p->key = key;
     p->val = val;
     p->used = 0;
@@ -108,6 +111,13 @@ char *option_find_str(list *l, char *key, char *def)
     char *v = option_find(l, key);
     if(v) return v;
     if(def) fprintf(stderr, "%s: Using default '%s'\n", key, def);
+    return def;
+}
+
+char *option_find_str_quiet(list *l, char *key, char *def)
+{
+    char *v = option_find(l, key);
+    if (v) return v;
     return def;
 }
 

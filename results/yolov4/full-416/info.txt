@@ -1,0 +1,12 @@
+train 1:
+  date: Fri Jun 19 12:47:48 UTC 2020
+  config: yolov4-416-FHD
+
+train 2:
+  date: Sat Jun 20 11:38:08 UTC 2020
+  config: yolov4-416-FHD
+
+train 3:
+  date: Mon Jun 22 11:44:13 UTC 2020
+  config: yolov4-416-FHD
+

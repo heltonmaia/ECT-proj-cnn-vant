@@ -1,0 +1,24 @@
+net.optimized_memory = 0 
+mini_batch = 1, batch = 16, time_steps = 1, train = 0 
+nms_kind: greedynms (1), beta = 0.600000 
+nms_kind: greedynms (1), beta = 0.600000 
+
+ seen 64, trained: 128 K-images (2 Kilo-batches_64) 
+
+ calculation mAP (mean average precision)...
+
+ detections_count = 2550, unique_truth_count = 3827  
+ rank = 0 of ranks = 2550  rank = 100 of ranks = 2550  rank = 200 of ranks = 2550  rank = 300 of ranks = 2550  rank = 400 of ranks = 2550  rank = 500 of ranks = 2550  rank = 600 of ranks = 2550  rank = 700 of ranks = 2550  rank = 800 of ranks = 2550  rank = 900 of ranks = 2550  rank = 1000 of ranks = 2550  rank = 1100 of ranks = 2550  rank = 1200 of ranks = 2550  rank = 1300 of ranks = 2550  rank = 1400 of ranks = 2550  rank = 1500 of ranks = 2550  rank = 1600 of ranks = 2550  rank = 1700 of ranks = 2550  rank = 1800 of ranks = 2550  rank = 1900 of ranks = 2550  rank = 2000 of ranks = 2550  rank = 2100 of ranks = 2550  rank = 2200 of ranks = 2550  rank = 2300 of ranks = 2550  rank = 2400 of ranks = 2550  rank = 2500 of ranks = 2550 class_id = 0, name = car, ap = 44.67%   	 (TP = 1027, FP = 46) 
+class_id = 1, name = bus, ap = 98.25%   	 (TP = 112, FP = 4) 
+class_id = 2, name = motorcycle, ap = 7.83%   	 (TP = 7, FP = 3) 
+
+ for conf_thresh = 0.25, precision = 0.96, recall = 0.30, F1-score = 0.46 
+ for conf_thresh = 0.25, TP = 1146, FP = 53, FN = 2681, average IoU = 72.15 % 
+
+ IoU threshold = 50 %, used Area-Under-Curve for each unique Recall 
+ mean average precision (mAP@0.50) = 0.502478, or 50.25 % 
+
+Set -points flag:
+ `-points 101` for MS COCO 
+ `-points 11` for PascalVOC 2007 (uncomment `difficult` in voc.data) 
+ `-points 0` (AUC) for ImageNet, PascalVOC 2010-2012, your custom dataset
