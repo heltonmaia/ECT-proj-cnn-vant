@@ -112,7 +112,7 @@ This script aims to track and detect the safe distance between vehicles. Usage:
 ```
 
 Example:
-```
+```console
 (<environment_name>) user@computer:~/proj-cnn-vant/safe_distance $ python safeDistanceToolYolov4.py ../yolov4-tiny-608_10000.weights ../demo.mp4 demo_output --save-video
 ```
 
