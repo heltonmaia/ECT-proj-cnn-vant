@@ -38,7 +38,7 @@ Now create a python virtual environment and install the required packages follow
 ```console
 user@computer:~$ conda create -n <environment_name> anaconda python=3
 user@computer:~$ conda activate <environment_name>
-(<environment_name>) user@computer:~$ conda install -c loopbio -c conda-forge -c pkgw-forge ffmpeg gtk2 opencv numpy scipy matplotlib cython pip
+(<environment_name>) user@computer:~$ conda install -c loopbio -c conda-forge -c pkgw-forge ffmpeg gtk2 opencv numpy scipy matplotlib cython progress pip
 (<environment_name>) user@computer:~$ pip install yolo34py-gpu
 ```
 
@@ -89,7 +89,7 @@ Now create a python virtual environment and install the required packages follow
 ```console
 user@computer:~$ conda create -n <environment_name> anaconda python=3
 user@computer:~$ conda activate <environment_name>
-(<environment_name>) user@computer:~$ conda install -c loopbio -c conda-forge -c pkgw-forge ffmpeg gtk2 opencv numpy scipy matplotlib pip
+(<environment_name>) user@computer:~$ conda install -c loopbio -c conda-forge -c pkgw-forge ffmpeg gtk2 opencv numpy scipy matplotlib progress pip
 (<environment_name>) user@computer:~$ pip install tensorflow yolov4
 ```
 
@@ -108,8 +108,16 @@ This script aims to track and detect the safe distance between vehicles. Usage:
 ```console
 (<environment_name>) user@computer:~ $ git clone https://github.com/vitoryeso/ECT-proj-cnn-vant.git
 (<environment_name>) user@computer:~ $ cd proj-cnn-vant/safe_distance
-(<environment_name>) user@computer:~/proj-cnn-vant/safe_distance $ python safeDistanceToolYolov4.py weight video output [--iou-thresh IOU_THRESH] [--score-thresh SCORE_THRESHi] [-h] [--debug] [--save-video]
+(<environment_name>) user@computer:~/proj-cnn-vant/safe_distance $ python safeDistanceToolYolov4.py weight video output [--video-save] [-h] [--debug] [--iou-thresh IOU_THRESH] [--score-thresh SCORE_THRESH]
 ```
+
+Example:
+```console
+(<environment_name>) user@computer:~/proj-cnn-vant/safe_distance $ python safeDistanceToolYolov4.py ../yolov4-tiny-608_10000.weights ../demo.mp4 demo_output --save-video
+```
+
+## Video example for testing
+This [video](https://drive.google.com/file/d/1PP2pG1QCghTuIZY3Htez9HKWfnGa4YMQ/view?usp=sharing) can be used for test Safe Distance Tool.
 
 ## Weights
 
