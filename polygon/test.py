@@ -31,8 +31,10 @@ def draw_polygon(event, x, y, flags, param):
         cv.imshow('window', img)
         mouseX, mouseY = x, y
 
-cv.putText(img, 'press r to start recording the polygon', 
+cv.putText(img, 'click to start recording the polygon', 
         (10, 30), cv.FONT_ITALIC, 1, (70, 255, 70), 2)
+cv.putText(img, 'press esc to quit', 
+        (10, 50), cv.FONT_ITALIC, 1, (70, 255, 70), 2)
 
 cv.namedWindow('window')
 cv.setMouseCallback('window', draw_polygon)
@@ -41,11 +43,6 @@ while(1):
     cv.imshow("window", img)
     
     c = cv.waitKey(0)
-
-    if c == ord('r'):
-        img = np.zeros((480, 640, 3), dtype=np.uint8)
-        cv.putText(img, 'recording !!!!', 
-                (10, 30), cv.FONT_ITALIC, 1, (70, 70, 255), 2)
 
     if c == 27:
         break
