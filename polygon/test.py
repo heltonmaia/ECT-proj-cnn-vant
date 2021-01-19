@@ -7,6 +7,13 @@ img = np.zeros((480, 640, 3), dtype=np.uint8)
 
 def distance(pt1, pt2):
     return abs(pt1[0]-pt2[0]) + abs(pt1[1] - pt2[1])
+def mean_pos(polygon):
+    x = 0
+    y = 0
+    for point in polygon:
+        x += point[0]
+        y += point[1]
+    return [ x//len(polygon), y//len(polygon) ]
 
 def draw_polygon(event, x, y, flags, param):
     global mouseX, mouseY
@@ -19,10 +26,15 @@ def draw_polygon(event, x, y, flags, param):
                 cv.line(img, points[-2], points[-1], (255, 0, 0), 4)
                 cv.circle(img, points[-1], 10, (255, 0, 0), 4)
             else:
+                points.remove(points[-1])
                 polygons.append(points)
                 for point in points[1:]:
                     cv.circle(img, point, 10, (255, 255, 0), 4)
                     cv.line(img, point, points[points.index(point)-1], (255, 255, 0), 4)
+
+                cv.circle(img, points[-1], 10, (255, 255, 0), 4)
+                cv.circle(img, points[0], 10, (255, 255, 0), 4)
+                cv.line(img, point, points[0], (255, 255, 0), 4)
                 points.clear()
 
         else:
