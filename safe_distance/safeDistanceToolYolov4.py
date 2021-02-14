@@ -3,6 +3,7 @@ from yolov4.tf import YOLOv4
 from math import sqrt
 from progress.bar import Bar
 from utils import *
+from selectPolygon import selectPolygon
 
 import numpy as np
 import pandas as pd
@@ -99,10 +100,12 @@ if __name__ == '__main__':
     roi_win = 'Select ROI for proximity detection'
     cv.namedWindow(roi_win, cv.WINDOW_KEEPRATIO)
     cv.resizeWindow(roi_win, 1685, 988)
-    roiX, roiY, roiW, roiH = cv.selectROI(roi_win, frame, False)
+    #roiX, roiY, roiW, roiH = cv.selectROI(roi_win, frame, False)
+    selectPolygon(roi_win, frame)
+
     cv.destroyWindow(roi_win)
 
-    #roiX, roiY, roiW, roiH = (380, 565, 1329, 317)
+    roiX, roiY, roiW, roiH = (380, 565, 1329, 317)
     
     if(args.debug):
         main_win = 'Safe Distance Tool'
