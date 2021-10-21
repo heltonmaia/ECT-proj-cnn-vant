@@ -4,7 +4,7 @@
 
 The frames captured from the user provided video are then fed into the [YOLOv3](#using-yolov3-for-detection) or [YOLOv4](#using-yolov4-for-detection) algorithm, where the vehicles detection is done. With the YOLO detections our algorithm then calculates the center of mass of each bounding box founded for then using the Euclidean method calculate the distance to the closest car. The detected class, index and distance to the closest detected vehicle are respectively shown above each bounding box.
 
-This project **was developed and tested for Ubuntu 16.04 and 18.04.**
+This project **was developed and tested for Ubuntu 16.04, 18.04, 20.04 and Arch Linux.**
 
 Knowledge in the darknet framework and YOLO object detector is required, further reading can be found [here](https://pjreddie.com/darknet/).
 
